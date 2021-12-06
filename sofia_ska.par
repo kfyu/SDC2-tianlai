@@ -1,0 +1,120 @@
+# pipeline
+pipeline.verbose = false
+pipeline.pedantic = true
+pipeline.threads = 2
+
+# input
+input.data = ../sdc2_data_v2/development/sky_dev_v2.fits
+input.region = 0, 327, 0, 327, 0, 3339
+input.gain = 
+input.noise = 
+input.weights = 
+input.mask = 
+input.invert = false
+
+# flag
+flag.region = 
+flag.catalog = 
+flag.radius = 5
+flag.auto = false
+flag.threshold = 5.0
+flag.log = false
+
+# contsub
+contsub.enable = false
+contsub.order = 0
+contsub.threshold = 2.0
+contsub.shift = 4
+contsub.padding = 3
+
+# scaleNoise
+scaleNoise.enable = true
+scaleNoise.mode = spectral
+scaleNoise.statistic = mad
+scaleNoise.fluxRange = negative
+scaleNoise.windowXY = 55
+scaleNoise.windowZ = 55
+scaleNoise.gridXY = 0
+scaleNoise.gridZ = 0
+scaleNoise.interpolate = true
+scaleNoise.scfind = false
+
+# rippleFilter
+rippleFilter.enable = false
+rippleFilter.statistic = median
+rippleFilter.windowXY = 31
+rippleFilter.windowZ = 15
+rippleFilter.gridXY = 0
+rippleFilter.gridZ = 0
+rippleFilter.interpolate = false
+
+# scfind
+scfind.enable = true
+scfind.kernelsXY = 0, 3, 7
+scfind.kernelsZ = 0, 3, 7, 15, 21, 45
+scfind.threshold = 4.0
+scfind.replacement = 1.0
+scfind.statistic = mad
+scfind.fluxRange = negative
+
+# threshold
+threshold.enable = false
+threshold.threshold = 5.0
+threshold.mode = relative
+threshold.statistic = mad
+threshold.fluxRange = negative
+
+# linker
+linker.enable = true
+linker.radiusXY = 1
+linker.radiusZ = 1
+linker.minSizeXY = 5
+linker.minSizeZ = 20
+linker.maxSizeXY = 0
+linker.maxSizeZ = 0
+linker.minPixels = 0
+linker.maxPixels = 0
+linker.minFill = 0.0
+linker.maxFill = 0.0
+linker.positivity = false
+linker.keepNegative = false
+
+# reliability
+reliability.enable = true
+reliability.threshold = 0.5
+reliability.scaleKernel = 0.3
+reliability.minSNR = 2.0
+reliability.catalog = 
+reliability.plot = true
+reliability.debug = false
+
+# dilation
+dilation.enable = true
+dilation.iterationsXY = 10
+dilation.iterationsZ = 5
+dilation.threshold = 0.001
+
+# parameter
+parameter.enable = true
+parameter.wcs = true
+parameter.physical = true
+parameter.prefix = SoFiA
+parameter.offset = false
+
+# output
+output.directory = ./sofia2_pipe_development/sofia_sky_dev_v2_sub_0
+output.filename = sofia_test_output
+output.writeCatASCII = true
+output.writeCatXML = false
+output.writeCatSQL = false
+output.writeNoise = false
+output.writeFiltered = false
+output.writeMask = false
+output.writeMask2d = false
+output.writeRawMask = false
+output.writeMoments = false
+output.writeCubelets = false
+output.marginCubelets = 10
+output.thresholdMom12 = 0.0
+output.overwrite = true
+
