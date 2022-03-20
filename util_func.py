@@ -15,6 +15,16 @@ SOFIA_COLUMNS = "name id x y z x_min x_max y_min y_max z_min z_max n_pix f_min f
 
 
 def read_true_cat(filename):
+    """Read the truth catalogue of a training datacube into pd.DataFrame.
+
+    Parameters
+    ----------
+    filename : str
+    
+    Returns
+    -------
+    Pd.DataFrame
+    """
 
     columns = "id ra dec hi_size line_flux_integral central_freq pa i w20"
     col_name = columns.split(" ")
@@ -27,6 +37,16 @@ def read_true_cat(filename):
 
 
 def read_sofia_cat(filename):
+    """Read the output catalogue of SoFiA-2 into pd.DataFrame.
+
+    Parameters
+    ----------
+    filename : str
+
+    Returns
+    -------
+    Pd.DataFrame
+    """
 
     sofia_df = pd.read_csv(filename, skiprows=13,
                            delim_whitespace=True, header=None)
@@ -39,6 +59,17 @@ def read_sofia_cat(filename):
 
 
 def writeParfile(filename, sourcefile, pars=None):
+    """Write a SoFiA-2 parameter file with some parameters reset based on a template file.
+
+    Parameters
+    ----------
+    filename : str
+        The path to write the new SoFiA-2 parameter file.
+    sourcefile : str
+        The path of a templete SoFiA-2 parameter file.
+    pars : dict
+        Parameters to be reset in the templete file.
+    """
 
     with open(sourcefile, 'r') as f:
         lines = f.readlines()
@@ -83,6 +114,18 @@ def writeParfile(filename, sourcefile, pars=None):
 
 
 def sofia_paras_trans(source_sofia):
+    """Convert and formalise some quantities of a source from SoFiA-2 output catalogue.
+    
+    Parameters
+    ----------
+    source_sofia : pd.Series
+        A source instance after reading SoFiA catalogue into Pandas.DataFrame(method: `read_sofia_cat()`).
+
+    Returns
+    -------
+    pd.Series
+        Filtered and converted parameters of a source which can be compared with the quantities given by the truth catalogue.
+    """
 
     pixel_size = 2.8  # arcsec / pixel for sdc2 dataset
     hi_size = source_sofia.ell_maj * pixel_size
@@ -107,6 +150,20 @@ def sofia_paras_trans(source_sofia):
 
 
 def weight_score(source_true, source_sub):
+    """Roughly score each matched source according to the scoring descreption(https://sdc2.astronomers.skatelescope.org/sdc2-challenge/scoring-code). 
+
+    Parameters
+    ----------
+    source_true : pd.Series
+        The corresponding true source. 
+    source_sub : pd.Series
+        The source found by SoFiA-2 which can match at least one source in truth catalogue.
+
+    Returns
+    -------
+    float
+        The score of the source.
+    """
 
     threshold_pos = 0.3
     threshold_hi_size = 0.3
@@ -158,6 +215,8 @@ def weight_score(source_true, source_sub):
 
 
 def scoring(filename, true_cat, outdir, idx):
+    """A method implemented in `params_search()` to produce/calculate the final score of each output catalogue resulting from parameters search.
+    """
 
     true_cat_df = read_true_cat(true_cat)
     sofia_cat_df = read_sofia_cat(filename)
@@ -215,6 +274,22 @@ def parameters_range(kw_params):
 
 
 def cube_split(x, y, z, nsubx=1, nsuby=1, nsubz=1, overlapx=0, overlapy=0, overlapz=0):
+    """
+
+    Parameters
+    ----------
+    x, y, z : int
+        The size of each axis to be split.
+    nsubx, nsuby, nsubz : int, optional
+        The number of each axis to be split into, by default 1.
+    overlapx, overlapy, overlapz : int, optional
+        The overlap size of neighboring cubes on each axis, by default 0.
+
+    Results
+    -------
+    tuple(np.ndarray, np.ndarray, np.ndarray)
+        A tuple containing three 2d-array. The first row of each 2d-array is the starting index of each sub-cube on the corresponding axis, the second row is the end index.
+    """
 
     def split_m(n, m):
         base = n // m
