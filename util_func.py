@@ -11,7 +11,8 @@ import time
 from pathlib import Path
 
 
-SOFIA_COLUMNS = "name id x y z x_min x_max y_min y_max z_min z_max n_pix f_min f_max f_sum rel flag rms w20 w50 wm50 ell_maj ell_min ell_pa ell3s_maj ell3s_min ell3s_pa kin_pa err_x err_y err_z err_f_sum ra dec freq x_peak y_peak z_peak ra_peak dec_peak freq_peak".split()
+# SOFIA_COLUMNS = "name id x y z x_min x_max y_min y_max z_min z_max n_pix f_min f_max f_sum rel flag rms w20 w50 wm50 ell_maj ell_min ell_pa ell3s_maj ell3s_min ell3s_pa kin_pa err_x err_y err_z err_f_sum ra dec freq x_peak y_peak z_peak ra_peak dec_peak freq_peak".split()
+SOFIA_COLUMNS = "name id x y z x_min x_max y_min y_max z_min z_max n_pix f_min f_max f_sum rel flag fill mean std skew kurt rms w20 w50 wm50 ell_maj ell_min ell_pa ell3s_maj ell3s_min ell3s_pa kin_pa err_x err_y err_z err_f_sum ra dec freq x_peak y_peak z_peak ra_peak dec_peak freq_peak".split()
 
 
 def read_true_cat(filename):
@@ -48,11 +49,11 @@ def read_sofia_cat(filename):
     Pd.DataFrame
     """
 
-    sofia_df = pd.read_csv(filename, skiprows=13,
-                           delim_whitespace=True, header=None)
-    sofia_df[0] = sofia_df[0] + ' ' + sofia_df[1]
-    sofia_df.drop(1, axis=1, inplace=True)
-    sofia_df.columns = SOFIA_COLUMNS
+    sofia_df = pd.read_csv(filename, skiprows=21,
+                           delim_whitespace=True, header=None, names=SOFIA_COLUMNS)
+    # sofia_df[0] = sofia_df[0] + ' ' + sofia_df[1]
+    # sofia_df.drop(1, axis=1, inplace=True)
+    # sofia_df.columns = SOFIA_COLUMNS
     sofia_df.astype({'id': int})
 
     return sofia_df
@@ -368,7 +369,7 @@ def params_search(params_list,
         outdir = output_dir + filename_idx + '/'
         par_filename = outdir + filename_idx + ".par"
 
-        sofia_cat_out = outdir + output_prefix +"_cat.txt"
+        sofia_cat_out = os.path.join(outdir, output_prefix + "_cat.txt")
 
         if os.path.exists(outdir):
             pass
@@ -429,11 +430,13 @@ def params_search_summary(param_dir,
                 matched_rate = 0
             else:
                 matched_rate = num_matched / num_found
-            result = result.append({"param_idx": param_idx, "matched": num_matched, "found": num_found,
-                                    "matched_rate": matched_rate, "score": score}, ignore_index=True)
+            res_i_df = pd.DataFrame({"param_idx": param_idx, "matched": num_matched, "found": num_found,
+                                    "matched_rate": matched_rate, "score": score}, index=[0])
+            result = pd.concat([result, res_i_df], ignore_index=True)
         else:
-            result = result.append({"param_idx": param_idx, "matched": None,
-                                    "found": None, "matched_rate": None, 'score': None}, ignore_index=True)
+            res_i_df = pd.DataFrame({"param_idx": param_idx, "matched": None,
+                                    "found": None, "matched_rate": None, 'score': None}, index=[0])
+            result = pd.concat([result, res_i_df], ignore_index=True)
 
     result_dropna = result.dropna().copy()
 

@@ -28,6 +28,7 @@ There are one templete SoFiA-2 parameters file ` sofia_ska.par` and two python f
 ### Requirements
 
 - SoFiA-2
+  > (Retest and make some minor changes for the latest version v2.4.1. Farther revision might still be needed if the ACSII format of SoFiA-2 output catalogue changes, mainly for the function `read_sofia_cat()` in *util_func.py*)
 - python >= 3.6 (f-string is great!)
 - pathos (replace the built-in *multiprocessing* package)
 - numpy
